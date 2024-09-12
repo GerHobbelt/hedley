@@ -22,3 +22,29 @@ jobs:
         run: make maintainer-clean && make generate ECHO="$(which echo)"
       - name: Check for changes
         run: git diff --exit-code
+
+  pelles-c:
+    runs-on: windows-latest
+    strategy:
+      matrix:
+        version:
+          # https://community.chocolatey.org/packages/pelles-c#versionhistory
+          - "12.0.2"
+          - "11.0.2"
+          - "10.0.6"
+          - "9.00.0.0"
+          # - "8.00.0.0" ## Installation times out.
+    steps:
+      - uses: actions/checkout@v2
+      - name: Install Pelles-C
+        uses: crazy-max/ghaction-chocolatey@v3
+        with:
+          args: install pelles-c --version "${{ matrix.version }}" --no-progress
+      - name: Compile
+        env:
+          CC: 'C:\Program Files\PellesC\bin\pocc.exe'
+          LD: 'C:\Program Files\PellesC\bin\polink.exe'
+          CFLAGS: '/IC:\Progra~1\PellesC\Include'
+          LDFLAGS: '/LIBPATH:C:\Progra~1\PellesC\lib /LIBPATH:C:\Progra~1\PellesC\Lib\Win64'
+        working-directory: test
+        run: make -f Makefile.pelles
