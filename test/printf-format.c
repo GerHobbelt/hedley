@@ -21,6 +21,10 @@
 
 HEDLEY_PRINTF_FORMAT(1,2)
 static void print_msg(const char* msg, ...) {
+#if defined(HEDLEY_DMC_VERSION) && !HEDLEY_DMC_VERSION_CHECK(8,39,0)
+  /* Old DMC versions didn't have a vsnprintf implementation until. */
+  (void) msg;
+#else
   char buf[128];
   va_list ap;
 
@@ -29,6 +33,7 @@ static void print_msg(const char* msg, ...) {
   vsnprintf(buf, sizeof(buf), msg, ap);
 
   va_end(ap);
+#endif
 }
 
 int main (void) {

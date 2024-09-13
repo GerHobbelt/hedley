@@ -23,6 +23,33 @@ jobs:
       - name: Check for changes
         run: git diff --exit-code
 
+  dmc:
+    runs-on: windows-latest
+    strategy:
+        matrix:
+          version:
+          - "8.26"
+          - "8.30"
+          - "8.40"
+          - "8.50"
+          - "8.57"
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install Digital Mars C/C++ Compiler
+        run: |
+          $version = "${{ matrix.version }}".Replace(".", "")
+          $url = "http://ftp.digitalmars.com/Digital_Mars_C++/Patch/dm${version}c.zip"
+          Invoke-WebRequest -Uri "${url}" -OutFile "dmc.zip"
+          Expand-Archive -LiteralPath "dmc.zip" -DestinationPath dmc-tmp
+          Move-Item -Path dmc-tmp\* -Destination dmc
+        working-directory: test
+      - name: Compile
+        env:
+          CC: dmc\bin\dmc.exe
+          CXX: dmc\bin\dmc.exe
+        run: make -f Makefile.dmc
+        working-directory: test
+
   nvhpc:
     runs-on: ubuntu-latest
     strategy:
