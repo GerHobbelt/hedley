@@ -1783,6 +1783,7 @@ HEDLEY_DIAGNOSTIC_POP
        ( \
           defined(__STDC_VERSION__) && (__STDC_VERSION__ >= 201112L) && \
           !defined(HEDLEY_SUNPRO_VERSION) && \
+          !defined(HEDLEY_PELLES_VERSION) && \
           !defined(HEDLEY_PGI_VERSION) && \
           !defined(HEDLEY_IAR_VERSION)) || \
        (HEDLEY_HAS_EXTENSION(c_generic_selections) && !defined(HEDLEY_IAR_VERSION)) || \
