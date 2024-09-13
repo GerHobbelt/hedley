@@ -128,3 +128,40 @@ jobs:
           LDFLAGS: '/LIBPATH:C:\Progra~1\PellesC\lib /LIBPATH:C:\Progra~1\PellesC\Lib\Win64'
         working-directory: test
         run: make -f Makefile.pelles
+
+  ti:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        include:
+        - tool: ARM
+          version: 20.2.7.LTS
+          compiler: armcl
+        - tool: MSP
+          version: 21.6.1.LTS
+          compiler: cl430
+        - tool: C2000
+          version: 22.6.1.LTS
+          compiler: cl2000
+        - tool: C6000
+          version: 8.3.13
+          compiler: cl6x
+        - tool: C7000
+          version: 4.1.0.LTS
+          compiler: cl7x
+        - tool: PRU
+          version: 2.3.3
+          compiler: clpru
+    steps:
+    - uses: actions/checkout@v4
+    - name: Install Compiler
+      run: |
+        curl -s -o installer.bin "$(curl -s "https://www.ti.com/tool/download/${{ matrix.tool }}-CGT/${{ matrix.version }}" | grep -oP 'https://[a-zA-Z0-9\._\-/]+\.bin')"
+        chmod u+x installer.bin
+        ./installer.bin --mode unattended --unattendedmodeui none --prefix ti-compiler
+        mv ti-compiler/* ti-compiler/compiler
+    - name: Compile
+      env:
+        CC: ../ti-compiler/compiler/bin/${{ matrix.compiler }}
+      working-directory: test
+      run: make
