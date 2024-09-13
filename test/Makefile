@@ -9,12 +9,12 @@ else ifeq ($(notdir $(CC)), suncc)
 else ifeq ($(notdir $(CC)),$(filter $(notdir $(CC)),armcl cl2000 cl430 cl6x cl7x clpru))
   CFLAGS ?= --display_error_number --emit_warnings_as_errors --issue_remarks -i $(dir $(shell readlink -f $(shell which $(CC))))../include
   C_OUTPUT_FILE := --output_file=
-else ifeq ($(notdir $(CC)), pgcc)
+else ifeq ($(notdir $(CC)),$(filter $(notdir $(CC)),pgcc nvc))
   CFLAGS ?= -Minform=inform -c11
   C_OUTPUT_FILE := -o
-else ifeq ($(notdir $(CC)), pgc++)
-  CFLAGS ?= --display_error_number -Minform=inform -Werror
-  C_OUTPUT_FILE := -o
+else ifeq ($(notdir $(CC)), nvcc)
+  CFLAGS ?= --Werror all-warnings
+  C_OUTPUT_FILE := --output-file=
 else ifeq ($(notdir $(CC)), xlc)
   CFLAGS ?= $(CLANG_C_FLAGS)
   C_OUTPUT_FILE := -o
@@ -46,6 +46,9 @@ else ifeq ($(notdir $(CXX)), sunCC)
   CXXFLAGS ?= -errwarn=%all -errtags=yes
   CXX_OUTPUT_FILE := -o
 else ifeq ($(notdir $(CXX)), pgc++)
+  CXXFLAGS ?= --display_error_number -Minform=inform -Werror
+  CXX_OUTPUT_FILE := -o
+else ifeq ($(notdir $(CXX)), nvc++)
   CXXFLAGS ?= --display_error_number -Minform=inform -Werror
   CXX_OUTPUT_FILE := -o
 else ifeq ($(notdir $(CXX)),$(filter $(notdir $(CC)),armcl cl2000 cl430 cl6x cl7x clpru))

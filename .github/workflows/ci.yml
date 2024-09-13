@@ -23,6 +23,59 @@ jobs:
       - name: Check for changes
         run: git diff --exit-code
 
+  nvhpc:
+    runs-on: ubuntu-latest
+    strategy:
+        matrix:
+          version:
+          # For available versions, see
+          # https://developer.download.nvidia.com/hpc-sdk/ubuntu/amd64/Packages
+          #
+          # Note that version prior to 21.11 don't support passing
+          # arguments to the __malloc__ attribute, which glibc >= 2.34,
+          # which is used in CI, does unconditionally. That causes
+          # breaks several of the tests for versions prior to 21.11.
+          # - "20.11"
+          # - "21.1" ## BROKEN. File size mismatch.
+          # - "21.2"
+          # - "21.3"
+          # - "21.5"
+          # - "21.7"
+          # - "21.9"
+          - "21.11"
+          # - "22.1"
+          # - "22.2"
+          # - "22.3"
+          # - "22.5"
+          # - "22.7"
+          # - "22.9"
+          - "22.11"
+          # - "23.1"
+          # - "23.3"
+          # - "23.5"
+          # - "23.7"
+          # - "23.9"
+          - "23.11"
+          # - "24.1"
+          # - "24.3"
+          # - "24.7"
+    steps:
+      - uses: actions/checkout@v4
+      - name: Free some disk space
+        run: sudo rm -rf /usr/local/lib/android /usr/local/.ghcup/ghc
+      - name: Install NVidia HPC SDK
+        run: |
+          curl https://developer.download.nvidia.com/hpc-sdk/ubuntu/DEB-GPG-KEY-NVIDIA-HPC-SDK | sudo gpg --dearmor -o /usr/share/keyrings/nvidia-hpcsdk-archive-keyring.gpg
+          echo 'deb [signed-by=/usr/share/keyrings/nvidia-hpcsdk-archive-keyring.gpg] https://developer.download.nvidia.com/hpc-sdk/ubuntu/amd64 /' | sudo tee /etc/apt/sources.list.d/nvhpc.list
+          sudo apt-get update -y
+          sudo apt-get install -y nvhpc-$(echo "${{ matrix.version }}" | tr '.' '-')
+      - name: Compile
+        env:
+          CC: /opt/nvidia/hpc_sdk/Linux_x86_64/"${{ matrix.version }}"/compilers/bin/nvc
+          CXX: /opt/nvidia/hpc_sdk/Linux_x86_64/"${{ matrix.version }}"/compilers/bin/nvc++
+        working-directory: test
+        run: make
+
   pelles-c:
     runs-on: windows-latest
     strategy:
