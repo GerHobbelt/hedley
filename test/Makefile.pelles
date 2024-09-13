@@ -9,9 +9,11 @@ TESTS = \
 	array-param.exe \
 	assume.exe \
 	cast.exe \
+	concat.exe \
 	const.exe \
 	constant.exe \
 	deprecated.exe \
+	empty-bases.exe \
 	fallthrough.exe \
 	flags.exe \
 	inline.exe \
@@ -19,6 +21,7 @@ TESTS = \
 	malloc.exe \
 	message.exe \
 	noinline.exe \
+	no-escape.exe \
 	no-return.exe \
 	non-null.exe \
 	predict.exe \
@@ -30,9 +33,11 @@ TESTS = \
 	sentinel.exe \
 	static-assert.exe \
 	stringify.exe \
+	unknown-cpp-attributes.exe \
 	unknown-pragmas.exe \
 	unavailable.exe \
 	unreachable.exe \
+	unused-function.exe \
 	visibility.exe \
 	warn.exe \
 	warn-unused-result.exe \
@@ -42,9 +47,11 @@ CLEANFILES = $(TESTS) \
 	array-param.obj array-param.exe \
 	assume.obj assume.exe \
 	cast.obj cast.exe \
+	concat.obj concat.exe \
 	const.obj const.exe \
 	constant.obj constant.exe \
 	deprecated.obj deprecated.exe \
+	empty-bases.obj empty-bases.exe \
 	fallthrough.obj fallthrough.exe \
 	flags.obj flags.exe \
 	inline.obj inline.exe \
@@ -52,6 +59,7 @@ CLEANFILES = $(TESTS) \
 	malloc.obj malloc.exe \
 	message.obj message.exe \
 	noinline.obj noinline.exe \
+	no-escape.obj no-escape.exe \
 	no-return.obj no-return.exe \
 	non-null.obj non-null.exe \
 	predict.obj predict.exe \
@@ -63,9 +71,11 @@ CLEANFILES = $(TESTS) \
 	sentinel.obj sentinel.exe \
 	static-assert.obj static-assert.exe \
 	stringify.obj stringify.exe \
+	unknown-cpp-attributes.obj unknown-cpp-attributes.exe \
 	unknown-pragmas.obj unknown-pragmas.exe \
 	unavailable.obj unavailable.exe \
 	unreachable.obj unreachable.exe \
+	unused-function.obj unused-function.exe \
 	visibility.obj visibility.exe \
 	warn.obj warn.exe \
 	warn-unused-result.obj warn-unused-result.exe \
@@ -94,6 +104,12 @@ cast.obj: cast.c
 cast.exe: cast.obj
 	$(LD) $(LDFLAGS) /OUT:cast.exe cast.obj
 
+concat.obj: concat.c
+	$(CC) $(CFLAGS) concat.c
+
+concat.exe: concat.obj
+	$(LD) $(LDFLAGS) /OUT:concat.exe concat.obj
+
 const.obj: const.c
 	$(CC) $(CFLAGS) const.c
 
@@ -111,6 +127,12 @@ deprecated.obj: deprecated.c
 
 deprecated.exe: deprecated.obj
 	$(LD) $(LDFLAGS) /OUT:deprecated.exe deprecated.obj
+
+empty-bases.obj: empty-bases.c
+	$(CC) $(CFLAGS) empty-bases.c
+
+empty-bases.exe: empty-bases.obj
+	$(LD) $(LDFLAGS) /OUT:empty-bases.exe empty-bases.obj
 
 fallthrough.obj: fallthrough.c
 	$(CC) $(CFLAGS) fallthrough.c
@@ -153,6 +175,12 @@ noinline.obj: noinline.c
 
 noinline.exe: noinline.obj
 	$(LD) $(LDFLAGS) /OUT:noinline.exe noinline.obj
+
+no-escape.obj: no-escape.c
+	$(CC) $(CFLAGS) no-escape.c
+
+no-escape.exe: no-escape.obj
+	$(LD) $(LDFLAGS) /OUT:no-escape.exe no-escape.obj
 
 no-return.obj: no-return.c
 	$(CC) $(CFLAGS) no-return.c
@@ -220,6 +248,12 @@ stringify.obj: stringify.c
 stringify.exe: stringify.obj
 	$(LD) $(LDFLAGS) /OUT:stringify.exe stringify.obj
 
+unknown-cpp-attributes.obj: unknown-cpp-attributes.c
+	$(CC) $(CFLAGS) unknown-cpp-attributes.c
+
+unknown-cpp-attributes.exe: unknown-cpp-attributes.obj
+	$(LD) $(LDFLAGS) /OUT:unknown-cpp-attributes.exe unknown-cpp-attributes.obj
+
 unknown-pragmas.obj: unknown-pragmas.c
 	$(CC) $(CFLAGS) unknown-pragmas.c
 
@@ -237,6 +271,12 @@ unreachable.obj: unreachable.c
 
 unreachable.exe: unreachable.obj
 	$(LD) $(LDFLAGS) /OUT:unreachable.exe unreachable.obj
+
+unused-function.obj: unused-function.c
+	$(CC) $(CFLAGS) unused-function.c
+
+unused-function.exe: unused-function.obj
+	$(LD) $(LDFLAGS) /OUT:unused-function.exe unused-function.obj
 
 visibility.obj: visibility.c
 	$(CC) $(CFLAGS) visibility.c

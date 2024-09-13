@@ -1,7 +1,8 @@
 version: "{build}"
 branches:
   except:
-    - /^(wip\/)?(travis|osx)(\-.+)?$/
+    - /^ci/(?!appveyor)(/.+)?/
+    - /^dependabot/(/.+)?/
 
 environment:
   matrix:
