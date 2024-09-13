@@ -59,7 +59,7 @@ jobs:
           # https://developer.download.nvidia.com/hpc-sdk/ubuntu/amd64/Packages
           #
           # Note that version prior to 21.11 don't support passing
-          # arguments to the __malloc__ attribute, which glibc >= 2.34,
+          # arguments to the __malloc__ atctribute, which glibc >= 2.34,
           # which is used in CI, does unconditionally. That causes
           # breaks several of the tests for versions prior to 21.11.
           # - "20.11"
@@ -178,3 +178,28 @@ jobs:
         CC: ../ti-compiler/compiler/bin/${{ matrix.compiler }}
       working-directory: test
       run: make
+
+  xlc:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    - uses: uraimo/run-on-arch-action@v2
+      name: Run commands
+      id: runcmd
+      with:
+        arch: ppc64le
+        distro: ubuntu22.04
+        install: |
+          apt-get update
+          apt-get install -y curl gnupg make libncurses5
+          curl -s https://public.dhe.ibm.com/software/server/POWER/Linux/xl-compiler/eval/ppc64le/ubuntu/public.gpg | apt-key add -
+          echo "deb https://public.dhe.ibm.com/software/server/POWER/Linux/xl-compiler/eval/ppc64le/ubuntu/ trusty main" | tee /etc/apt/sources.list.d/ibm-xl-compiler-eval.list
+          apt-get update
+          apt-get install -y xlc.16.1.1
+          /opt/ibm/xlC/16.1.1/bin/xlc_configure <<< 1
+        env: |
+          CC: xlc
+          CXX: xlc++
+        run: |
+          cd test
+          make

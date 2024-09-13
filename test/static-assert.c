@@ -1,6 +1,8 @@
 #include "../hedley.h"
 
-#if HEDLEY_IAR_VERSION_CHECK(8,0,0)
+#if HEDLEY_HAS_WARNING("-Wextra-semi")
+#  pragma clang diagnostic warning "-Wextra-semi"
+#elif HEDLEY_IAR_VERSION_CHECK(8,0,0)
 #  pragma diag_suppress=Pe381
 #elif defined(HEDLEY_SUNPRO_VERSION) && !defined(__cplusplus)
 #  pragma error_messages(off,E_EMPTY_DECLARATION)

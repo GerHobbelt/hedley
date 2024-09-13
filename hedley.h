@@ -1348,7 +1348,9 @@ HEDLEY_DIAGNOSTIC_POP
 #if defined(HEDLEY_UNPREDICTABLE)
 #  undef HEDLEY_UNPREDICTABLE
 #endif
-#if HEDLEY_HAS_BUILTIN(__builtin_unpredictable)
+#if \
+  HEDLEY_HAS_BUILTIN(__builtin_unpredictable) && \
+  (!defined(HEDLEY_IBM_VERSION) || HEDLEY_IBM_VERSION_CHECK(17,0,0))
 #  define HEDLEY_UNPREDICTABLE(expr) __builtin_unpredictable((expr))
 #endif
 #if \
@@ -1969,7 +1971,10 @@ HEDLEY_DIAGNOSTIC_POP
 #if defined(HEDLEY_FLAGS)
 #  undef HEDLEY_FLAGS
 #endif
-#if HEDLEY_HAS_ATTRIBUTE(flag_enum) && (!defined(__cplusplus) || HEDLEY_HAS_WARNING("-Wbitfield-enum-conversion"))
+#if \
+  HEDLEY_HAS_ATTRIBUTE(flag_enum) && \
+  (!defined(__cplusplus) || HEDLEY_HAS_WARNING("-Wbitfield-enum-conversion")) && \
+  (!defined(HEDLEY_IBM_VERSION) || HEDLEY_IBM_VERSION_CHECK(17,0,0))
 #  define HEDLEY_FLAGS __attribute__((__flag_enum__))
 #else
 #  define HEDLEY_FLAGS
