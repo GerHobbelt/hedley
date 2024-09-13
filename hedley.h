@@ -1063,7 +1063,13 @@
 #  define HEDLEY_DEPRECATED_FOR(since, replacement) __attribute__((__deprecated__))
 #elif \
   HEDLEY_MSVC_VERSION_CHECK(13,10,0) || \
-  HEDLEY_PELLES_VERSION_CHECK(6,50,0) || \
+  ( \
+    HEDLEY_PELLES_VERSION_CHECK(6,50,0) && \
+    !( \
+      HEDLEY_PELLES_VERSION_CHECK(9,0,0) && \
+      !HEDLEY_PELLES_VERSION_CHECK(11,0,0) \
+    ) \
+  ) || \
   HEDLEY_INTEL_CL_VERSION_CHECK(2021,1,0)
 #  define HEDLEY_DEPRECATED(since) __declspec(deprecated)
 #  define HEDLEY_DEPRECATED_FOR(since, replacement) __declspec(deprecated)
