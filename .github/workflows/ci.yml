@@ -129,6 +129,19 @@ jobs:
         working-directory: test
         run: make -f Makefile.pelles
 
+  tcc:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    - name: Install Tiny C Compiler
+      run: |
+        sudo apt-get install -y tcc
+    - name: Compile
+      env:
+        CC: tcc
+      working-directory: test
+      run: make
+
   ti:
     runs-on: ubuntu-latest
     strategy:
