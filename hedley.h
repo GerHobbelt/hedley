@@ -1013,6 +1013,23 @@
 #  define HEDLEY_DIAGNOSTIC_DISABLE_UNUSED_FUNCTION
 #endif
 
+#if defined(HEDLEY_DIAGNOSTIC_DISABLE_EXTRA_SEMI)
+#  undef HEDLEY_DIAGNOSTIC_DISABLE_EXTRA_SEMI
+#endif
+#if HEDLEY_HAS_WARNING("-Wc++11-extra-semi") && HEDLEY_HAS_WARNING("-Wextra-semi")
+#  define HEDLEY_DIAGNOSTIC_DISABLE_EXTRA_SEMI _Pragma("clang diagnostic ignored \"-Wc++11-extra-semi\"") _Pragma("clang diagnostic ignored \"-Wextra-semi\"")
+#elif HEDLEY_HAS_WARNING("-Wextra-semi")
+#  define HEDLEY_DIAGNOSTIC_DISABLE_EXTRA_SEMI _Pragma("clang diagnostic ignored \"-Wextra-semi\"")
+#elif HEDLEY_IAR_VERSION_CHECK(8,0,0)
+#  define HEDLEY_DIAGNOSTIC_DISABLE_EXTRA_SEMI _Pragma("diag_suppress=Pe381")
+#elif defined(HEDLEY_SUNPRO_VERSION) && !defined(__cplusplus)
+#  define HEDLEY_DIAGNOSTIC_DISABLE_EXTRA_SEMI _Pragma("error_messages(off,E_EMPTY_DECLARATION)")
+#elif defined(HEDLEY_TI_VERSION)
+#  define HEDLEY_DIAGNOSTIC_DISABLE_EXTRA_SEMI _Pragma("diag_suppress 383")
+#else
+#  define HEDLEY_DIAGNOSTIC_DISABLE_EXTRA_SEMI
+#endif
+
 #if defined(HEDLEY_DEPRECATED)
 #  undef HEDLEY_DEPRECATED
 #endif
