@@ -1789,7 +1789,7 @@ HEDLEY_DIAGNOSTIC_POP
   HEDLEY_MCST_LCC_VERSION_CHECK(1,25,10)
 #  define HEDLEY_IS_CONSTANT(expr) __builtin_constant_p(expr)
 #endif
-#if !defined(__cplusplus)
+#if !defined(__cplusplus) && !HEDLEY_INTEL_VERSION_CHECK(20,21,7)
 #  if \
        HEDLEY_HAS_BUILTIN(__builtin_types_compatible_p) || \
        HEDLEY_GCC_VERSION_CHECK(3,4,0) || \
