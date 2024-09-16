@@ -1,7 +1,9 @@
 Version 16
 ==========
 
-* New HEDLEY_DIAGNOSTIC_DISABLE_EXTRA_SEMI macro.
+* New macros:
+  * HEDLEY_DIAGNOSTIC_DISABLE_EXTRA_SEMI
+  * HEDLEY_DIAGNOSTIC_DISABLE_UNSAFE_BUFFER_USAGE
 * Assorted bug fixes and enhancements.
 
 Version 15

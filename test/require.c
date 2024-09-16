@@ -1,4 +1,4 @@
-#include "../hedley.h"
+#include "common.h"
 
 #if defined(_MSC_VER)
   HEDLEY_DIAGNOSTIC_PUSH

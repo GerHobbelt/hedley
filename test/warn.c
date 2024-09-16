@@ -1,4 +1,4 @@
-#include "../hedley.h"
+#include "common.h"
 
 #if defined(HEDLEY_INTEL_VERSION)
 #  pragma warning(disable:1028)

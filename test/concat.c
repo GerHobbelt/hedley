@@ -1,4 +1,4 @@
-#include "../hedley.h"
+#include "common.h"
 
 #define FOO a
 #define BAR b

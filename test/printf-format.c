@@ -1,4 +1,4 @@
-#include "../hedley.h"
+#include "common.h"
 
 #include <stdio.h>
 #include <stdarg.h>

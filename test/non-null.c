@@ -1,4 +1,4 @@
-#include "../hedley.h"
+#include "common.h"
 
 #if HEDLEY_PGI_VERSION_CHECK(20,7,0)
 #  pragma diag_remark 1622,1623

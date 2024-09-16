@@ -1,4 +1,4 @@
-#include "../hedley.h"
+#include "common.h"
 
 HEDLEY_UNAVAILABLE(3.14)
 static void

@@ -9,7 +9,7 @@
   #include <stddef.h>
 #endif
 
-#include "../hedley.h"
+#include "common.h"
 
 int main(int argc, char* argv[HEDLEY_ARRAY_PARAM(argc)]) {
   char foo[HEDLEY_REQUIRE_CONSTEXPR(42)] = { 0, };

@@ -1,4 +1,4 @@
-#include "../hedley.h"
+#include "common.h"
 
 int main(int argc, char* argv[HEDLEY_ARRAY_PARAM(argc)]) {
   int foo = 0;
