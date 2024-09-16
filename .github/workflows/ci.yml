@@ -50,6 +50,50 @@ jobs:
         run: make -f Makefile.dmc
         working-directory: test
 
+  icc:
+    runs-on: ubuntu-20.04
+    strategy:
+      matrix:
+        version:
+        - "2021.1.1"
+        # - "2021.1.2"
+        # - "2021.2.0"
+        # - "2021.3.0"
+        - "2021.4.0"
+        # - "2022.0.1"
+        # - "2022.0.2"
+        # - "2022.1.0"
+        - "2022.2.0"
+        # - "2022.2.1"
+        # - "2023.0.0"
+        # - "2023.1.0"
+        # - "2023.2.0"
+        - "2023.2.1"
+    steps:
+      - uses: actions/checkout@v4
+      - name: Free some disk space
+        run: sudo rm -rf /usr/local/lib/android /usr/local/.ghcup/ghc
+      - name: Install Intel Classic C/C++ Compiler
+        run: |
+          curl -s https://apt.repos.intel.com/intel-gpg-keys/GPG-PUB-KEY-INTEL-SW-PRODUCTS.PUB | gpg --dearmor | sudo tee /usr/share/keyrings/oneapi-archive-keyring.gpg > /dev/null
+          echo "deb [signed-by=/usr/share/keyrings/oneapi-archive-keyring.gpg] https://apt.repos.intel.com/oneapi all main" | sudo tee /etc/apt/sources.list.d/oneAPI.list
+          sudo apt-get update
+          sudo apt-get install -y "intel-oneapi-compiler-dpcpp-cpp-and-cpp-classic-${{ matrix.version }}"
+      - name: Compiler Info
+        working-directory: test
+        run: |
+          . /opt/intel/oneapi/setvars.sh
+          icc --version
+          icc -dM -E - </dev/null
+      - name: Compile
+        env:
+          CC: icc
+          CXX: icpc
+        working-directory: test
+        run: |
+          . /opt/intel/oneapi/setvars.sh
+          make
+
   nvhpc:
     runs-on: ubuntu-latest
     strategy:
