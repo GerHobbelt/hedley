@@ -23,6 +23,35 @@ jobs:
       - name: Check for changes
         run: git diff --exit-code
 
+  armclang:
+    runs-on: ubuntu-${{ matrix.distro }}
+    strategy:
+      matrix:
+        include:
+          # https://developer.arm.com/Tools%20and%20Software/Arm%20Compiler%20for%20Linux#Software-Download
+          - version: "24.04"
+            distro: "22.04"
+    steps:
+    - uses: actions/checkout@v4
+    - uses: uraimo/run-on-arch-action@v2
+      name: Run commands
+      with:
+        arch: aarch64
+        distro: ubuntu${{ matrix.distro }}
+        install: |
+          apt-get update
+          apt-get install -y curl python3 libc6-dev make gcc g++
+          mkdir /tmp/armclang-installer
+          cd /tmp/armclang-installer
+          curl -s "https://developer.arm.com/-/cdn-downloads/permalink/Arm-Compiler-for-Linux/Version_${{ matrix.version }}/arm-compiler-for-linux_${{ matrix.version }}_Ubuntu-${{ matrix.distro }}_aarch64.tar" | tar xv
+          ./arm-compiler-for-linux_${{ matrix.version }}_Ubuntu-${{ matrix.distro }}/arm-compiler-for-linux_${{ matrix.version }}_Ubuntu-${{ matrix.distro }}.sh --accept
+        env: |
+          CC: /opt/arm/arm-linux-compiler-24.04_Ubuntu-22.04/bin/armclang
+          CXX: /opt/arm/arm-linux-compiler-24.04_Ubuntu-22.04/bin/armclang++
+        run: |
+          cd test
+          make
+
   clang:
     runs-on: ubuntu-${{ matrix.distro }}
     strategy:
