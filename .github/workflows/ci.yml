@@ -23,6 +23,67 @@ jobs:
       - name: Check for changes
         run: git diff --exit-code
 
+  clang:
+    runs-on: ubuntu-${{ matrix.distro }}
+    strategy:
+      matrix:
+        include:
+        # Previous versions will no longer run on GitHub, but can be
+        # tested in Docker. Here are the versions which are available:
+        #
+        # - Ubuntu 14.04: 3.3 - 3.9
+        # - Ubuntu 16.04: 3.5 - 6.0
+        # - Ubuntu 18.04: 3.9 - 10
+
+        - version: "6.0"
+          distro: "20.04"
+        - version: "7"
+          distro: "20.04"
+        - version: "8"
+          distro: "20.04"
+        - version: "9"
+          distro: "20.04"
+        - version: "10"
+          distro: "20.04"
+        # - version: "11"
+        #   distro: "20.04"
+        # - version: "12"
+        #   distro: "20.04"
+
+        - version: "11"
+          distro: "22.04"
+        - version: "12"
+          distro: "22.04"
+        - version: "13"
+          distro: "22.04"
+        # - version: "14"
+        #   distro: "22.04"
+        # - version: "15"
+        #   distro: "22.04"
+
+        - version: "14"
+          distro: "24.04"
+        - version: "15"
+          distro: "24.04"
+        - version: "16"
+          distro: "24.04"
+        - version: "17"
+          distro: "24.04"
+        - version: "18"
+          distro: "24.04"
+    steps:
+    - uses: actions/checkout@v4
+    - name: Install Clang ${{ matrix.version }}
+      run: |
+        sudo apt-get update
+        sudo apt-get -y install clang-${{ matrix.version }}
+    - name: Compile
+      env:
+        CC: clang-${{ matrix.version }}
+        CXX: clang++-${{ matrix.version }}
+      run: make
+      working-directory: test
+
   dmc:
     runs-on: windows-latest
     strategy:
