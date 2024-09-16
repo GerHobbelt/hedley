@@ -1727,13 +1727,24 @@ HEDLEY_DIAGNOSTIC_POP
 # undef HEDLEY_FALL_THROUGH
 #endif
 #if \
-  HEDLEY_HAS_ATTRIBUTE(fallthrough) || \
+  ( \
+    HEDLEY_HAS_ATTRIBUTE(fallthrough) && \
+    (!defined(HEDLEY_INTEL_VERSION) || HEDLEY_INTEL_VERSION_CHECK(20,21,5)) \
+  ) || \
   HEDLEY_GCC_VERSION_CHECK(7,0,0) || \
   HEDLEY_MCST_LCC_VERSION_CHECK(1,25,10)
 #  define HEDLEY_FALL_THROUGH __attribute__((__fallthrough__))
-#elif HEDLEY_HAS_CPP_ATTRIBUTE_NS(clang,fallthrough)
+#elif \
+  ( \
+    HEDLEY_HAS_CPP_ATTRIBUTE_NS(clang,fallthrough) && \
+    (!defined(HEDLEY_INTEL_VERSION) || HEDLEY_INTEL_VERSION_CHECK(20,21,5)) \
+  )
 #  define HEDLEY_FALL_THROUGH HEDLEY_DIAGNOSTIC_DISABLE_CPP98_COMPAT_WRAP_([[clang::fallthrough]])
-#elif HEDLEY_HAS_CPP_ATTRIBUTE(fallthrough)
+#elif \
+  ( \
+    HEDLEY_HAS_CPP_ATTRIBUTE(fallthrough) && \
+    (!defined(HEDLEY_INTEL_VERSION) || HEDLEY_INTEL_VERSION_CHECK(20,21,5)) \
+  )
 #  define HEDLEY_FALL_THROUGH HEDLEY_DIAGNOSTIC_DISABLE_CPP98_COMPAT_WRAP_([[fallthrough]])
 #elif defined(__fallthrough) /* SAL */
 #  define HEDLEY_FALL_THROUGH __fallthrough
