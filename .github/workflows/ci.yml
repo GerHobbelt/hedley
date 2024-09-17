@@ -111,6 +111,62 @@ jobs:
         run: make -f Makefile.dmc
         working-directory: test
 
+  gcc:
+    runs-on: ubuntu-${{ matrix.distro }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+        # Previous versions will no longer run on GitHub, but can be
+        # tested in Docker. Here are the versions which are available:
+        #
+        # - Ubuntu 14.04: 4.4 - 4.8
+        # - Ubuntu 16.04: 4.6 - 5
+        # - Ubuntu 18.04: 5 - 8
+
+        - version: "7"
+          distro: "20.04"
+        - version: "8"
+          distro: "20.04"
+        # - version: "9"
+        #   distro: "20.04"
+        # - version: "10"
+        #   distro: "20.04"
+
+        # - version: "9"
+        #   distro: "22.04"
+        # - version: "10"
+        #   distro: "22.04"
+        # - version: "11"
+        #   distro: "22.04"
+        # - version: "12"
+        #   distro: "22.04"
+
+        - version: "9"
+          distro: "24.04"
+        - version: "10"
+          distro: "24.04"
+        - version: "11"
+          distro: "24.04"
+        - version: "12"
+          distro: "24.04"
+        - version: "13"
+          distro: "24.04"
+        - version: "14"
+          distro: "24.04"
+    steps:
+    - uses: actions/checkout@v4
+    - name: Install GCC
+      run: |
+        sudo apt-get update
+        sudo apt-get -y install gcc-${{ matrix.version }} g++-${{ matrix.version }}
+    - name: Compile
+      env:
+        CC: gcc-${{ matrix.version }}
+        CXX: g++-${{ matrix.version }}
+      run: make
+      working-directory: test
+
   icc:
     runs-on: ubuntu-20.04
     strategy:

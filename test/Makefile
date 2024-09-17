@@ -24,7 +24,7 @@ else ifeq ($(notdir $(CC)), icc)
 else ifeq ($(notdir $(CC)), tcc)
   CFLAGS ?=
   C_OUTPUT_FILE := -o
-else ifeq ($(notdir $(CC)), gcc)
+else ifeq ($(notdir $(firstword $(subst -, ,$(notdir $(CC))))),$(filter $(firstword $(subst -, ,$(notdir $(CC)))),gcc))
   CFLAGS ?= $(GCC_C_FLAGS)
   C_OUTPUT_FILE := -o
 else ifeq ($(notdir $(CC)), x86_64-w64-mingw32-gcc)
@@ -60,7 +60,7 @@ else ifeq ($(notdir $(CXX)), xlc++)
 else ifeq ($(notdir $(CXX)), icpc)
   CXXFLAGS ?= $(GCC_CXX_FLAGS)
   CXX_OUTPUT_FILE := -o
-else ifeq ($(notdir $(CXX)), g++)
+else ifeq ($(notdir $(firstword $(subst -, ,$(notdir $(CC))))),$(filter $(firstword $(subst -, ,$(notdir $(CC)))),g++))
   CXXFLAGS ?= $(GCC_CXX_FLAGS)
   CXX_OUTPUT_FILE := -o
 else ifeq ($(notdir $(CXX)), x86_64-w64-mingw32-g++)
@@ -295,13 +295,13 @@ maintainer-clean: clean
 
 .PHONY: clean all
 
-ifeq ($(notdir $(CC)), gcc)
+ifeq ($(notdir $(firstword $(subst -, ,$(notdir $(CC))))),$(filter $(firstword $(subst -, ,$(notdir $(CC)))),gcc))
 $(foreach tgt,unavailable warn unknown-pragmas,$(eval $(call GEN_GCC_C_WARNINGS,$(tgt))))
 else ifeq ($(notdir $(CC)), x86_64-w64-mingw32-gcc)
 $(foreach tgt,unavailable warn unknown-pragmas,$(eval $(call GEN_GCC_C_WARNINGS,$(tgt))))
 endif
 
-ifeq ($(notdir $(CXX)), g++)
+ifeq ($(notdir $(firstword $(subst -, ,$(notdir $(CC))))),$(filter $(firstword $(subst -, ,$(notdir $(CC)))),g++))
 $(foreach tgt,unavailable warn unknown-pragmas,$(eval $(call GEN_GCC_CXX_WARNINGS,$(tgt))))
 else ifeq ($(notdir $(CXX)), x86_64-w64-mingw32-g++)
 $(foreach tgt,unavailable warn unknown-pragmas,$(eval $(call GEN_GCC_CXX_WARNINGS,$(tgt))))
