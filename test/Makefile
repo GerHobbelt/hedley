@@ -1,7 +1,7 @@
 CLANG_C_FLAGS = -Weverything -Wno-vla -Wno-covered-switch-default -Werror
 GCC_C_FLAGS = -Wall -Wextra -Werror
 
-ifeq ($(notdir $(firstword $(subst -, ,$(notdir $(CC))))),$(filter $(firstword $(subst -, ,$(notdir $(CC)))),clang))
+ifeq ($(notdir $(firstword $(subst -, ,$(notdir $(CC))))),$(filter $(firstword $(subst -, ,$(notdir $(CC)))),clang icx))
   CFLAGS ?= $(CLANG_C_FLAGS)
 else ifeq ($(notdir $(CC)), suncc)
   CFLAGS ?= -errwarn -errtags
@@ -40,7 +40,7 @@ endif
 CLANG_CXX_FLAGS = -Weverything -Werror
 GCC_CXX_FLAGS = -Wall -Wextra -Werror
 
-ifeq ($(notdir $(firstword $(subst -, ,$(notdir $(CC))))),$(filter $(firstword $(subst -, ,$(notdir $(CC)))),clang++))
+ifeq ($(notdir $(firstword $(subst -, ,$(notdir $(CC))))),$(filter $(firstword $(subst -, ,$(notdir $(CC)))),clang++ icpx))
   CXXFLAGS ?= $(CLANG_CXX_FLAGS)
 else ifeq ($(notdir $(CXX)), sunCC)
   CXXFLAGS ?= -errwarn=%all -errtags=yes

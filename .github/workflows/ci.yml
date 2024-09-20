@@ -196,49 +196,78 @@ jobs:
       run: make
       working-directory: test
 
-  icc:
+  intel:
     runs-on: ubuntu-20.04
     strategy:
       matrix:
-        version:
-        - "2021.1.1"
-        # - "2021.1.2"
-        # - "2021.2.0"
-        # - "2021.3.0"
-        - "2021.4.0"
-        # - "2022.0.1"
-        # - "2022.0.2"
-        # - "2022.1.0"
-        - "2022.2.0"
-        # - "2022.2.1"
-        # - "2023.0.0"
-        # - "2023.1.0"
-        # - "2023.2.0"
-        - "2023.2.1"
+        include:
+        - version: "2021.1.1"
+          classic: true
+        # - version: "2021.1.2"
+        #   classic: true
+        # - version: "2021.2.0"
+        #   classic: true
+        # - version: "2021.3.0"
+        #   classic: true
+        # - version: "2021.4.0"
+        #   classic: true
+        - version: "2022.0.1"
+          classic: true
+        # - version: "2022.0.2"
+        #   classic: true
+        # - version: "2022.1.0"
+        #   classic: true
+        # - version: "2022.2.0"
+        #   classic: true
+        # - version: "2022.2.1"
+        #   classic: true
+        - version: "2023.0.0"
+          classic: true
+        # - version: "2023.1.0"
+        #   classic: true
+        # - version: "2023.2.0"
+        #   classic: true
+        - version: "2023.2.1"
+          classic: true
+        - version: "2023.2.2"
+        # - version: "2023.2.3"
+        # - version: "2023.2.4"
+        # - version: "2024.0"
+        # - version: "2024.1"
+        - version: "2024.2"
     steps:
       - uses: actions/checkout@v4
       - name: Free some disk space
         run: sudo rm -rf /usr/local/lib/android /usr/local/.ghcup/ghc
-      - name: Install Intel Classic C/C++ Compiler
+      - name: Configure Intel OneAPI Repository
         run: |
           curl -s https://apt.repos.intel.com/intel-gpg-keys/GPG-PUB-KEY-INTEL-SW-PRODUCTS.PUB | gpg --dearmor | sudo tee /usr/share/keyrings/oneapi-archive-keyring.gpg > /dev/null
           echo "deb [signed-by=/usr/share/keyrings/oneapi-archive-keyring.gpg] https://apt.repos.intel.com/oneapi all main" | sudo tee /etc/apt/sources.list.d/oneAPI.list
           sudo apt-get update
+      - name: Install Intel oneAPI DPC++/C++ Compiler
+        run: |
+          sudo apt-get install -y "intel-oneapi-compiler-dpcpp-cpp-${{ matrix.version }}"
+      - name: Install Intel Classic C/C++ Compiler
+        if: matrix.classic
+        run: |
           sudo apt-get install -y "intel-oneapi-compiler-dpcpp-cpp-and-cpp-classic-${{ matrix.version }}"
-      - name: Compiler Info
+      - name: Compile with Intel oneAPI DPC++/C++ Compiler
+        env:
+          CC: icx
+          CXX: icpx
         working-directory: test
         run: |
           . /opt/intel/oneapi/setvars.sh
-          icc --version
-          icc -dM -E - </dev/null
-      - name: Compile
+          make && make clean
+      - name: Compile with Intel Classic C/C++ Compiler
+        if: matrix.classic
         env:
           CC: icc
           CXX: icpc
         working-directory: test
         run: |
           . /opt/intel/oneapi/setvars.sh
-          make
+          make && make clean
 
   nvhpc:
     runs-on: ubuntu-latest
