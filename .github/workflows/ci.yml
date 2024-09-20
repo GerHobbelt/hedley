@@ -353,7 +353,7 @@ jobs:
           - "9.00.0.0"
           # - "8.00.0.0" ## Installation times out.
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
       - name: Install Pelles-C
         uses: crazy-max/ghaction-chocolatey@v3
         with:
