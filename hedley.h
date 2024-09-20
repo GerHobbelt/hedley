@@ -1924,7 +1924,7 @@ HEDLEY_DIAGNOSTIC_POP
   !defined(__cplusplus) && ( \
       (defined(__STDC_VERSION__) && (__STDC_VERSION__ >= 201112L)) || \
       (HEDLEY_HAS_FEATURE(c_static_assert) && !defined(HEDLEY_INTEL_CL_VERSION)) || \
-      HEDLEY_GCC_VERSION_CHECK(6,0,0) || \
+      HEDLEY_GCC_VERSION_CHECK(4,6,0) || \
       HEDLEY_INTEL_VERSION_CHECK(13,0,0) || \
       defined(_Static_assert) \
     )
