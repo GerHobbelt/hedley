@@ -1312,6 +1312,7 @@ HEDLEY_DIAGNOSTIC_PUSH
 #    pragma GCC diagnostic ignored "-Wvariadic-macros"
 #  endif
 #endif
+
 #if defined(HEDLEY_NON_NULL)
 #  undef HEDLEY_NON_NULL
 #endif
@@ -1323,6 +1324,15 @@ HEDLEY_DIAGNOSTIC_PUSH
 #  define HEDLEY_NON_NULL(...) __attribute__((__nonnull__(__VA_ARGS__)))
 #else
 #  define HEDLEY_NON_NULL(...)
+#endif
+
+#if defined(HEDLEY_ALLOC_SIZE)
+#  undef HEDLEY_ALLOC_SIZE
+#endif
+#if HEDLEY_GCC_HAS_ATTRIBUTE(alloc_size,4,3,0) && !defined(HEDLEY_IBM_VERSION)
+#  define HEDLEY_ALLOC_SIZE(...) __attribute__((__alloc_size__(__VA_ARGS__)))
+#else
+#  define HEDLEY_ALLOC_SIZE(...)
 #endif
 HEDLEY_DIAGNOSTIC_POP
 

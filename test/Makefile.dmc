@@ -6,6 +6,7 @@ CFLAGS ?= -w -w17 -w18 -wx
 CXXFLAGS ?= -wc $(CFLAGS)
 
 TESTS = \
+	alloc-size.exe alloc-size-cpp.exe \
 	array-param.exe array-param-cpp.exe \
 	assume.exe assume-cpp.exe \
 	cast.exe cast-cpp.exe \
@@ -44,6 +45,7 @@ TESTS = \
 	$(NULL)
 
 CLEANFILES = $(TESTS) \
+	alloc-size.cpp alloc-size.exe alloc-size-cpp.exe alloc-size.map alloc-size-cpp.map \
 	array-param.cpp array-param.exe array-param-cpp.exe array-param.map array-param-cpp.map \
 	assume.cpp assume.exe assume-cpp.exe assume.map assume-cpp.map \
 	cast.cpp cast.exe cast-cpp.exe cast.map cast-cpp.map \
@@ -85,6 +87,13 @@ all: $(TESTS)
 
 clean:
 	del /Q $(CLEANFILES)
+
+alloc-size.exe: alloc-size.c
+	$(CC) $(CFLAGS) -o $(@) $(?)
+alloc-size.cpp: alloc-size.c
+	cp -f $(?) $(@)
+alloc-size-cpp.exe: alloc-size.cpp
+	$(CXX) $(CXXFLAGS) -o $(@) $(?)
 
 array-param.exe: array-param.c
 	$(CC) $(CFLAGS) -o $(@) $(?)

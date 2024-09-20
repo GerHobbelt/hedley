@@ -76,6 +76,7 @@ CXX_OUTPUT_FILE ?= --output=
 NULL =
 
 TESTS = \
+	alloc-size \
 	array-param \
 	assume \
 	cast \

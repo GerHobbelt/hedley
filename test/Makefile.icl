@@ -6,6 +6,7 @@ CFLAGS = /nologo /Wall /wd4464 /wd4514
 CXXFLAGS = $(CFLAGS)
 
 TESTS = \
+	alloc-size.exe alloc-size-cpp.exe \
 	array-param.exe array-param-cpp.exe \
 	assume.exe assume-cpp.exe \
 	cast.exe cast-cpp.exe \
@@ -44,6 +45,7 @@ TESTS = \
 	$(NULL)
 
 TESTS = \
+	alloc-size.exe alloc-size-cpp.exe \
 	array-param.exe array-param-cpp.exe \
 	assume.exe assume-cpp.exe \
 	cast.exe cast-cpp.exe \
@@ -82,6 +84,7 @@ TESTS = \
 	$(NULL)
 
 CLEANFILES = $(TESTS) \
+	alloc-size.cpp alloc-size.obj alloc-size.lib alloc-size-cpp.exp alloc-size-cpp.lib \
 	array-param.cpp array-param.obj array-param.lib array-param-cpp.exp array-param-cpp.lib \
 	assume.cpp assume.obj assume.lib assume-cpp.exp assume-cpp.lib \
 	cast.cpp cast.obj cast.lib cast-cpp.exp cast-cpp.lib \
@@ -123,6 +126,13 @@ all: $(TESTS)
 
 clean:
 	del /Q $(CLEANFILES)
+
+alloc-size.exe: alloc-size.c
+	$(CC) $(CFLAGS) /Fe$(@) $(?)
+alloc-size.cpp: alloc-size.c
+	copy /Y $(?) $(@) >NUL
+alloc-size-cpp.exe: alloc-size.cpp
+	$(CXX) $(CXXFLAGS) /Fe$(@) $(?)
 
 array-param.exe: array-param.c
 	$(CC) $(CFLAGS) /Fe$(@) $(?)

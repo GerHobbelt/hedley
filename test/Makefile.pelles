@@ -6,6 +6,7 @@ CFLAGS ?=
 LDFLAGS ?= 
 
 TESTS = \
+	alloc-size.exe \
 	array-param.exe \
 	assume.exe \
 	cast.exe \
@@ -44,6 +45,7 @@ TESTS = \
 	$(NULL)
 
 CLEANFILES = $(TESTS) \
+	alloc-size.obj alloc-size.exe \
 	array-param.obj array-param.exe \
 	assume.obj assume.exe \
 	cast.obj cast.exe \
@@ -85,6 +87,12 @@ all: $(TESTS)
 
 clean:
 	del /Q $(CLEANFILES)
+
+alloc-size.obj: alloc-size.c
+	$(CC) $(CFLAGS) alloc-size.c
+
+alloc-size.exe: alloc-size.obj
+	$(LD) $(LDFLAGS) /OUT:alloc-size.exe alloc-size.obj
 
 array-param.obj: array-param.c
 	$(CC) $(CFLAGS) array-param.c
