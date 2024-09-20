@@ -1184,7 +1184,15 @@
   HEDLEY_MCST_LCC_VERSION_CHECK(1,25,10)
 #  define HEDLEY_NO_RETURN __attribute__((__noreturn__))
 #elif defined(__STDC_VERSION__) && __STDC_VERSION__ >= 201112L
-#  define HEDLEY_NO_RETURN _Noreturn
+#  if HEDLEY_HAS_WARNING("-Wpre-c11-compat")
+#    define HEDLEY_NO_RETURN \
+       HEDLEY_DIAGNOSTIC_PUSH \
+       _Pragma("clang diagnostic ignored \"-Wpre-c11-compat\"") \
+       _Noreturn \
+       HEDLEY_DIAGNOSTIC_POP
+#  else
+#    define HEDLEY_NO_RETURN _Noreturn
+#  endif
 #elif defined(__cplusplus) && (__cplusplus >= 201103L)
 #  define HEDLEY_NO_RETURN HEDLEY_DIAGNOSTIC_DISABLE_CPP98_COMPAT_WRAP_([[noreturn]])
 #elif \
@@ -1910,7 +1918,15 @@ HEDLEY_DIAGNOSTIC_POP
       HEDLEY_INTEL_VERSION_CHECK(13,0,0) || \
       defined(_Static_assert) \
     )
-#  define HEDLEY_STATIC_ASSERT(expr, message) _Static_assert(expr, message)
+#  if HEDLEY_HAS_WARNING("-Wpre-c11-compat")
+#    define HEDLEY_STATIC_ASSERT(expr, message) \
+       HEDLEY_DIAGNOSTIC_PUSH \
+       _Pragma("clang diagnostic ignored \"-Wpre-c11-compat\"") \
+       _Static_assert(expr, message) \
+       HEDLEY_DIAGNOSTIC_POP
+#  else
+#    define HEDLEY_STATIC_ASSERT(expr, message) _Static_assert(expr, message)
+#  endif
 #elif \
   (defined(__cplusplus) && (__cplusplus >= 201103L)) || \
   HEDLEY_MSVC_VERSION_CHECK(16,0,0) || \
