@@ -1706,6 +1706,8 @@ HEDLEY_DIAGNOSTIC_POP
 #  define HEDLEY_FALL_THROUGH HEDLEY_DIAGNOSTIC_DISABLE_CPP98_COMPAT_WRAP_([[clang::fallthrough]])
 #elif HEDLEY_HAS_CPP_ATTRIBUTE(fallthrough)
 #  define HEDLEY_FALL_THROUGH HEDLEY_DIAGNOSTIC_DISABLE_CPP98_COMPAT_WRAP_([[fallthrough]])
+#elif HEDLEY_MSVC_VERSION_CHECK(19,20,0)
+#  define HEDLEY_FALL_THROUGH [[fallthrough]]
 #elif defined(__fallthrough) /* SAL */
 #  define HEDLEY_FALL_THROUGH __fallthrough
 #else
