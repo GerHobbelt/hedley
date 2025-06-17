@@ -6,6 +6,7 @@ CFLAGS = /nologo /Wall /wd4464 /wd4514
 CXXFLAGS = $(CFLAGS)
 
 TESTS = \
+	alloc-size.exe alloc-size-cpp.exe \
 	array-param.exe array-param-cpp.exe \
 	assume.exe assume-cpp.exe \
 	cast.exe cast-cpp.exe \
@@ -37,12 +38,14 @@ TESTS = \
 	unknown-pragmas.exe unknown-pragmas-cpp.exe \
 	unavailable.exe unavailable-cpp.exe \
 	unreachable.exe unreachable-cpp.exe \
+	unused-function.exe unused-function-cpp.exe \
 	visibility.exe visibility-cpp.exe \
 	warn.exe warn-cpp.exe \
 	warn-unused-result.exe warn-unused-result-cpp.exe \
 	$(NULL)
 
 TESTS = \
+	alloc-size.exe alloc-size-cpp.exe \
 	array-param.exe array-param-cpp.exe \
 	assume.exe assume-cpp.exe \
 	cast.exe cast-cpp.exe \
@@ -74,12 +77,14 @@ TESTS = \
 	unknown-pragmas.exe unknown-pragmas-cpp.exe \
 	unavailable.exe unavailable-cpp.exe \
 	unreachable.exe unreachable-cpp.exe \
+	unused-function.exe unused-function-cpp.exe \
 	visibility.exe visibility-cpp.exe \
 	warn.exe warn-cpp.exe \
 	warn-unused-result.exe warn-unused-result-cpp.exe \
 	$(NULL)
 
 CLEANFILES = $(TESTS) \
+	alloc-size.cpp alloc-size.obj alloc-size.lib alloc-size-cpp.exp alloc-size-cpp.lib \
 	array-param.cpp array-param.obj array-param.lib array-param-cpp.exp array-param-cpp.lib \
 	assume.cpp assume.obj assume.lib assume-cpp.exp assume-cpp.lib \
 	cast.cpp cast.obj cast.lib cast-cpp.exp cast-cpp.lib \
@@ -111,6 +116,7 @@ CLEANFILES = $(TESTS) \
 	unknown-pragmas.cpp unknown-pragmas.obj unknown-pragmas.lib unknown-pragmas-cpp.exp unknown-pragmas-cpp.lib \
 	unavailable.cpp unavailable.obj unavailable.lib unavailable-cpp.exp unavailable-cpp.lib \
 	unreachable.cpp unreachable.obj unreachable.lib unreachable-cpp.exp unreachable-cpp.lib \
+	unused-function.cpp unused-function.obj unused-function.lib unused-function-cpp.exp unused-function-cpp.lib \
 	visibility.cpp visibility.obj visibility.lib visibility-cpp.exp visibility-cpp.lib \
 	warn.cpp warn.obj warn.lib warn-cpp.exp warn-cpp.lib \
 	warn-unused-result.cpp warn-unused-result.obj warn-unused-result.lib warn-unused-result-cpp.exp warn-unused-result-cpp.lib \
@@ -120,6 +126,13 @@ all: $(TESTS)
 
 clean:
 	del /Q $(CLEANFILES)
+
+alloc-size.exe: alloc-size.c
+	$(CC) $(CFLAGS) /Fe$(@) $(?)
+alloc-size.cpp: alloc-size.c
+	copy /Y $(?) $(@) >NUL
+alloc-size-cpp.exe: alloc-size.cpp
+	$(CXX) $(CXXFLAGS) /Fe$(@) $(?)
 
 array-param.exe: array-param.c
 	$(CC) $(CFLAGS) /Fe$(@) $(?)
@@ -336,6 +349,13 @@ unreachable.exe: unreachable.c
 unreachable.cpp: unreachable.c
 	copy /Y $(?) $(@) >NUL
 unreachable-cpp.exe: unreachable.cpp
+	$(CXX) $(CXXFLAGS) /Fe$(@) $(?)
+
+unused-function.exe: unused-function.c
+	$(CC) $(CFLAGS) /Fe$(@) $(?)
+unused-function.cpp: unused-function.c
+	copy /Y $(?) $(@) >NUL
+unused-function-cpp.exe: unused-function.cpp
 	$(CXX) $(CXXFLAGS) /Fe$(@) $(?)
 
 visibility.exe: visibility.c

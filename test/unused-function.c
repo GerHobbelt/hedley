@@ -1,6 +1,8 @@
-#include "../hedley.h"
+#include "common.h"
 
 HEDLEY_DIAGNOSTIC_DISABLE_UNUSED_FUNCTION
+
+int square(int x);
 
 int square(int x) {
   return x * x;

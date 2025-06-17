@@ -1,4 +1,4 @@
-#include "../hedley.h"
+#include "common.h"
 
 HEDLEY_DIAGNOSTIC_PUSH
 HEDLEY_DIAGNOSTIC_DISABLE_UNKNOWN_PRAGMAS

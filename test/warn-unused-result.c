@@ -1,4 +1,4 @@
-#include "../hedley.h"
+#include "common.h"
 
 #if HEDLEY_HAS_WARNING("-Wunused-result")
 #  pragma clang diagnostic warning "-Wunused-result"

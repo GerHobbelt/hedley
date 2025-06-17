@@ -6,6 +6,7 @@ CFLAGS = --silent --remarks --warnings_are_errors
 CXXFLAGS = --c++ $(CFLAGS)
 
 TESTS = \
+	alloc-size.o alloc-size-cpp.o \
 	array-param.o array-param-cpp.o \
 	assume.o assume-cpp.o \
 	cast.o cast-cpp.o \
@@ -44,6 +45,7 @@ TESTS = \
 	$(NULL)
 
 CLEANFILES = $(TESTS) \
+	alloc-size.cpp alloc-size.o alloc-size-cpp.o \
 	array-param.cpp array-param.o array-param-cpp.o \
 	assume.cpp assume.o assume-cpp.o \
 	cast.cpp cast.o cast-cpp.o \
@@ -85,6 +87,13 @@ all: $(TESTS)
 
 clean:
 	del /Q $(CLEANFILES)
+
+alloc-size.o: alloc-size.c
+	$(CC) $(CFLAGS) --output $(@) $(?)
+alloc-size.cpp: alloc-size.c
+	copy /Y $(?) $(@) >NUL
+alloc-size-cpp.o: alloc-size.cpp
+	$(CXX) $(CXXFLAGS) --output $(@) $(?)
 
 array-param.o: array-param.c
 	$(CC) $(CFLAGS) --output $(@) $(?)

@@ -1,0 +1,454 @@
+on:
+  push:
+    branches-ignore:
+      - 'ci/**'
+      - '!ci/gha**'
+      - 'dependabot/**'
+  pull_request:
+    branches:
+      - 'master'
+
+concurrency:
+  group: build-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  check-generated-files:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Regenerate files
+        working-directory: test
+        run: make maintainer-clean && make generate ECHO="$(which echo)"
+      - name: Check for changes
+        run: git diff --exit-code
+
+  armclang:
+    runs-on: ubuntu-${{ matrix.distro }}
+    strategy:
+      matrix:
+        include:
+          # https://developer.arm.com/Tools%20and%20Software/Arm%20Compiler%20for%20Linux#Software-Download
+          - version: "24.04"
+            distro: "22.04"
+    steps:
+    - uses: actions/checkout@v4
+    - uses: uraimo/run-on-arch-action@v2
+      name: Run commands
+      with:
+        arch: aarch64
+        distro: ubuntu${{ matrix.distro }}
+        install: |
+          apt-get update
+          apt-get install -y curl python3 libc6-dev make gcc g++
+          mkdir /tmp/armclang-installer
+          cd /tmp/armclang-installer
+          curl -s "https://developer.arm.com/-/cdn-downloads/permalink/Arm-Compiler-for-Linux/Version_${{ matrix.version }}/arm-compiler-for-linux_${{ matrix.version }}_Ubuntu-${{ matrix.distro }}_aarch64.tar" | tar xv
+          ./arm-compiler-for-linux_${{ matrix.version }}_Ubuntu-${{ matrix.distro }}/arm-compiler-for-linux_${{ matrix.version }}_Ubuntu-${{ matrix.distro }}.sh --accept
+        env: |
+          CC: /opt/arm/arm-linux-compiler-24.04_Ubuntu-22.04/bin/armclang
+          CXX: /opt/arm/arm-linux-compiler-24.04_Ubuntu-22.04/bin/armclang++
+        run: |
+          cd test
+          make
+
+  clang:
+    runs-on: ubuntu-${{ matrix.distro }}
+    strategy:
+      matrix:
+        include:
+        # Previous versions will no longer run on GitHub, but can be
+        # tested in Docker. Here are the versions which are available:
+        #
+        # - Ubuntu 14.04: 3.3 - 3.9
+        # - Ubuntu 16.04: 3.5 - 6.0
+        # - Ubuntu 18.04: 3.9 - 10
+
+        - version: "6.0"
+          distro: "20.04"
+        - version: "7"
+          distro: "20.04"
+        - version: "8"
+          distro: "20.04"
+        - version: "9"
+          distro: "20.04"
+        - version: "10"
+          distro: "20.04"
+        # - version: "11"
+        #   distro: "20.04"
+        # - version: "12"
+        #   distro: "20.04"
+
+        - version: "11"
+          distro: "22.04"
+        - version: "12"
+          distro: "22.04"
+        - version: "13"
+          distro: "22.04"
+        # - version: "14"
+        #   distro: "22.04"
+        # - version: "15"
+        #   distro: "22.04"
+
+        - version: "14"
+          distro: "24.04"
+        - version: "15"
+          distro: "24.04"
+        - version: "16"
+          distro: "24.04"
+        - version: "17"
+          distro: "24.04"
+        - version: "18"
+          distro: "24.04"
+    steps:
+    - uses: actions/checkout@v4
+    - name: Install Clang ${{ matrix.version }}
+      run: |
+        sudo apt-get update
+        sudo apt-get -y install clang-${{ matrix.version }}
+    - name: Compile
+      env:
+        CC: clang-${{ matrix.version }}
+        CXX: clang++-${{ matrix.version }}
+      run: make
+      working-directory: test
+
+  dmc:
+    runs-on: windows-latest
+    strategy:
+        matrix:
+          version:
+          - "8.26"
+          - "8.30"
+          - "8.40"
+          - "8.50"
+          - "8.57"
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install Digital Mars C/C++ Compiler
+        run: |
+          $version = "${{ matrix.version }}".Replace(".", "")
+          $url = "http://ftp.digitalmars.com/Digital_Mars_C++/Patch/dm${version}c.zip"
+          Invoke-WebRequest -Uri "${url}" -OutFile "dmc.zip"
+          Expand-Archive -LiteralPath "dmc.zip" -DestinationPath dmc-tmp
+          Move-Item -Path dmc-tmp\* -Destination dmc
+        working-directory: test
+      - name: Compile
+        env:
+          CC: dmc\bin\dmc.exe
+          CXX: dmc\bin\dmc.exe
+        run: make -f Makefile.dmc
+        working-directory: test
+
+  emcscripten:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    - uses: mymindstorm/setup-emsdk@v14
+    - name: Compile
+      env:
+        CC: emcc
+        CXX: emcc
+      run: make -C test
+
+  gcc:
+    runs-on: ubuntu-${{ matrix.distro }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+        # Previous versions will no longer run on GitHub, but can be
+        # tested in Docker. Here are the versions which are available:
+        #
+        # - Ubuntu 14.04: 4.4 - 4.8
+        # - Ubuntu 16.04: 4.6 - 5
+        # - Ubuntu 18.04: 5 - 8
+
+        - version: "7"
+          distro: "20.04"
+        - version: "8"
+          distro: "20.04"
+        # - version: "9"
+        #   distro: "20.04"
+        # - version: "10"
+        #   distro: "20.04"
+
+        # - version: "9"
+        #   distro: "22.04"
+        # - version: "10"
+        #   distro: "22.04"
+        # - version: "11"
+        #   distro: "22.04"
+        # - version: "12"
+        #   distro: "22.04"
+
+        - version: "9"
+          distro: "24.04"
+        - version: "10"
+          distro: "24.04"
+        - version: "11"
+          distro: "24.04"
+        - version: "12"
+          distro: "24.04"
+        - version: "13"
+          distro: "24.04"
+        - version: "14"
+          distro: "24.04"
+    steps:
+    - uses: actions/checkout@v4
+    - name: Install GCC
+      run: |
+        sudo apt-get update
+        sudo apt-get -y install gcc-${{ matrix.version }} g++-${{ matrix.version }}
+    - name: Compile
+      env:
+        CC: gcc-${{ matrix.version }}
+        CXX: g++-${{ matrix.version }}
+      run: make
+      working-directory: test
+
+  intel:
+    runs-on: ubuntu-20.04
+    strategy:
+      matrix:
+        include:
+        - version: "2021.1.1"
+          classic: true
+        # - version: "2021.1.2"
+        #   classic: true
+        # - version: "2021.2.0"
+        #   classic: true
+        # - version: "2021.3.0"
+        #   classic: true
+        # - version: "2021.4.0"
+        #   classic: true
+        - version: "2022.0.1"
+          classic: true
+        # - version: "2022.0.2"
+        #   classic: true
+        # - version: "2022.1.0"
+        #   classic: true
+        # - version: "2022.2.0"
+        #   classic: true
+        # - version: "2022.2.1"
+        #   classic: true
+        - version: "2023.0.0"
+          classic: true
+        # - version: "2023.1.0"
+        #   classic: true
+        # - version: "2023.2.0"
+        #   classic: true
+        - version: "2023.2.1"
+          classic: true
+        - version: "2023.2.2"
+        # - version: "2023.2.3"
+        # - version: "2023.2.4"
+        # - version: "2024.0"
+        # - version: "2024.1"
+        - version: "2024.2"
+    steps:
+      - uses: actions/checkout@v4
+      - name: Free some disk space
+        run: sudo rm -rf /usr/local/lib/android /usr/local/.ghcup/ghc
+      - name: Configure Intel OneAPI Repository
+        run: |
+          curl -s https://apt.repos.intel.com/intel-gpg-keys/GPG-PUB-KEY-INTEL-SW-PRODUCTS.PUB | gpg --dearmor | sudo tee /usr/share/keyrings/oneapi-archive-keyring.gpg > /dev/null
+          echo "deb [signed-by=/usr/share/keyrings/oneapi-archive-keyring.gpg] https://apt.repos.intel.com/oneapi all main" | sudo tee /etc/apt/sources.list.d/oneAPI.list
+          sudo apt-get update
+      - name: Install Intel oneAPI DPC++/C++ Compiler
+        run: |
+          sudo apt-get install -y "intel-oneapi-compiler-dpcpp-cpp-${{ matrix.version }}"
+      - name: Install Intel Classic C/C++ Compiler
+        if: matrix.classic
+        run: |
+          sudo apt-get install -y "intel-oneapi-compiler-dpcpp-cpp-and-cpp-classic-${{ matrix.version }}"
+      - name: Compile with Intel oneAPI DPC++/C++ Compiler
+        env:
+          CC: icx
+          CXX: icpx
+        working-directory: test
+        run: |
+          . /opt/intel/oneapi/setvars.sh
+          make && make clean
+      - name: Compile with Intel Classic C/C++ Compiler
+        if: matrix.classic
+        env:
+          CC: icc
+          CXX: icpc
+        working-directory: test
+        run: |
+          . /opt/intel/oneapi/setvars.sh
+          make && make clean
+
+  nvhpc:
+    runs-on: ubuntu-${{ matrix.distro != '' && matrix.distro || 'latest' }}
+    strategy:
+      matrix:
+        include:
+          # For available versions, see
+          # https://developer.download.nvidia.com/hpc-sdk/ubuntu/amd64/Packages
+        - version: "20.11"
+          distro: "20.04"
+        # - version: "21.1" ## BROKEN. File size mismatch.
+        #   distro: "20.04"
+        # - version: "21.2"
+        #   distro: "20.04"
+        # - version: "21.3"
+        #   distro: "20.04"
+        # - version: "21.5"
+        #   distro: "20.04"
+        - version: "21.7"
+          distro: "20.04"
+        # - version: "21.9"
+        #   distro: "20.04"
+        # - version: "21.11"
+        #   distro: "22.04"
+        # - version: "22.1"
+        #   distro: "22.04"
+        # - version: "22.2"
+        #   distro: "22.04"
+        - version: "22.3"
+          distro: "22.04"
+        # - version: "22.5"
+        #   distro: "22.04"
+        # - version: "22.7"
+        #   distro: "22.04"
+        # - version: "22.9"
+        #   distro: "22.04"
+        # - version: "22.11"
+        #   distro: "22.04"
+        - version: "23.1"
+          distro: "22.04"
+        # - version: "23.3"
+        #   distro: "22.04"
+        # - version: "23.5"
+        #   distro: "22.04"
+        # - version: "23.7"
+        #   distro: "22.04"
+        # - version: "23.9"
+        #   distro: "22.04"
+        - version: "23.11"
+          distro: "22.04"
+        # - version: "24.1"
+        #   distro: "22.04"
+        # - version: "24.3"
+        #   distro: "22.04"
+        - version: "24.7"
+          distro: "24.04"
+    steps:
+      - uses: actions/checkout@v4
+      - name: Free some disk space
+        run: sudo rm -rf /usr/local/lib/android /usr/local/.ghcup/ghc
+      - name: Install NVidia HPC SDK
+        run: |
+          curl https://developer.download.nvidia.com/hpc-sdk/ubuntu/DEB-GPG-KEY-NVIDIA-HPC-SDK | sudo gpg --dearmor -o /usr/share/keyrings/nvidia-hpcsdk-archive-keyring.gpg
+          echo 'deb [signed-by=/usr/share/keyrings/nvidia-hpcsdk-archive-keyring.gpg] https://developer.download.nvidia.com/hpc-sdk/ubuntu/amd64 /' | sudo tee /etc/apt/sources.list.d/nvhpc.list
+          sudo apt-get update -y
+          sudo apt-get install -y nvhpc-$(echo "${{ matrix.version }}" | tr '.' '-')
+      - name: Compile
+        env:
+          CC: /opt/nvidia/hpc_sdk/Linux_x86_64/"${{ matrix.version }}"/compilers/bin/nvc
+          CXX: /opt/nvidia/hpc_sdk/Linux_x86_64/"${{ matrix.version }}"/compilers/bin/nvc++
+        working-directory: test
+        run: make
+
+  pelles-c:
+    runs-on: windows-latest
+    strategy:
+      matrix:
+        version:
+          # https://community.chocolatey.org/packages/pelles-c#versionhistory
+          - "12.0.2"
+          - "11.0.2"
+          - "10.0.6"
+          - "9.00.0.0"
+          # - "8.00.0.0" ## Installation times out.
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install Pelles-C
+        uses: crazy-max/ghaction-chocolatey@v3
+        with:
+          args: install pelles-c --version "${{ matrix.version }}" --no-progress
+      - name: Compile
+        env:
+          CC: 'C:\Program Files\PellesC\bin\pocc.exe'
+          LD: 'C:\Program Files\PellesC\bin\polink.exe'
+          CFLAGS: '/IC:\Progra~1\PellesC\Include'
+          LDFLAGS: '/LIBPATH:C:\Progra~1\PellesC\lib /LIBPATH:C:\Progra~1\PellesC\Lib\Win64'
+        working-directory: test
+        run: make -f Makefile.pelles
+
+  tcc:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    - name: Install Tiny C Compiler
+      run: |
+        sudo apt-get install -y tcc
+    - name: Compile
+      env:
+        CC: tcc
+      working-directory: test
+      run: make
+
+  ti:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        include:
+        - tool: ARM
+          version: 20.2.7.LTS
+          compiler: armcl
+        - tool: MSP
+          version: 21.6.1.LTS
+          compiler: cl430
+        - tool: C2000
+          version: 22.6.1.LTS
+          compiler: cl2000
+        - tool: C6000
+          version: 8.3.13
+          compiler: cl6x
+        - tool: C7000
+          version: 4.1.0.LTS
+          compiler: cl7x
+        - tool: PRU
+          version: 2.3.3
+          compiler: clpru
+    steps:
+    - uses: actions/checkout@v4
+    - name: Install Compiler
+      run: |
+        curl -s -o installer.bin "$(curl -s "https://www.ti.com/tool/download/${{ matrix.tool }}-CGT/${{ matrix.version }}" | grep -oP 'https://[a-zA-Z0-9\._\-/]+\.bin')"
+        chmod u+x installer.bin
+        ./installer.bin --mode unattended --unattendedmodeui none --prefix ti-compiler
+        mv ti-compiler/* ti-compiler/compiler
+    - name: Compile
+      env:
+        CC: ../ti-compiler/compiler/bin/${{ matrix.compiler }}
+      working-directory: test
+      run: make
+
+  xlc:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    - uses: uraimo/run-on-arch-action@v2
+      name: Run commands
+      id: runcmd
+      with:
+        arch: ppc64le
+        distro: ubuntu22.04
+        install: |
+          apt-get update
+          apt-get install -y curl gnupg make libncurses5
+          curl -s https://public.dhe.ibm.com/software/server/POWER/Linux/xl-compiler/eval/ppc64le/ubuntu/public.gpg | apt-key add -
+          echo "deb https://public.dhe.ibm.com/software/server/POWER/Linux/xl-compiler/eval/ppc64le/ubuntu/ trusty main" | tee /etc/apt/sources.list.d/ibm-xl-compiler-eval.list
+          apt-get update
+          apt-get install -y xlc.16.1.1
+          /opt/ibm/xlC/16.1.1/bin/xlc_configure <<< 1
+        env: |
+          CC: xlc
+          CXX: xlc++
+        run: |
+          cd test
+          make

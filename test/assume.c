@@ -1,4 +1,4 @@
-#include "../hedley.h"
+#include "common.h"
 
 static int foo(int x) {
   HEDLEY_ASSUME(x < 10 && x > 0);

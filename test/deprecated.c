@@ -1,4 +1,4 @@
-#include "../hedley.h"
+#include "common.h"
 
 struct Foo {
   int x;

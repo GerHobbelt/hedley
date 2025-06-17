@@ -1,4 +1,4 @@
-#include "../hedley.h"
+#include "common.h"
 
 int main(void) {
   int foo = 0;

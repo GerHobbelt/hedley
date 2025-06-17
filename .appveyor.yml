@@ -1,7 +1,8 @@
 version: "{build}"
 branches:
   except:
-    - /^(wip\/)?(travis|osx)(\-.+)?$/
+    - /^ci/(?!appveyor)(/.+)?/
+    - /^dependabot/(/.+)?/
 
 environment:
   matrix:
@@ -10,8 +11,6 @@ environment:
     - COMPILER: msvc
       APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2019
       VS_YEAR: 2019
-    - COMPILER: pelles
-
     - COMPILER: msvc
       APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2017
       VS_YEAR: 2017

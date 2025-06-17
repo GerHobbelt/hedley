@@ -1,4 +1,4 @@
-#include "../hedley.h"
+#include "common.h"
 
 #if HEDLEY_HAS_WARNING("-Wcovered-switch-default")
 #  pragma clang diagnostic warning "-Wcovered-switch-default"

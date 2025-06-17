@@ -1,4 +1,4 @@
-#include "../hedley.h"
+#include "common.h"
 
 #if HEDLEY_HAS_WARNING("-Wsentinel")
 #  pragma clang diagnostic warning "-Wsentinel"

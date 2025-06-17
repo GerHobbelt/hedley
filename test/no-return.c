@@ -1,4 +1,4 @@
-#include "../hedley.h"
+#include "common.h"
 
 #if defined(HEDLEY_IAR_VERSION)
 #  pragma diag_suppress=Pe082

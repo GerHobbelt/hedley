@@ -1,4 +1,4 @@
-#include "../hedley.h"
+#include "common.h"
 
 HEDLEY_INLINE
 static int test_inline(int a, int b) {

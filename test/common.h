@@ -1,0 +1,3 @@
+#include "../hedley.h"
+
+HEDLEY_DIAGNOSTIC_DISABLE_UNSAFE_BUFFER_USAGE
